@@ -1,0 +1,2 @@
+curl.exe -X POST "http://192.168.50.218:8000/api/v1/competition/reset" -H "X-Student-ID: B22DCCN320"    
+curl.exe -X POST "http://192.168.50.218:8000/api/v1/competition/evaluate" -H "X-Student-ID: B22DCCN320"   

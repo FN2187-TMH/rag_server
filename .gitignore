@@ -1,0 +1,3 @@
+models/
+vietnamese-sbert-local/
+*.safetensors
