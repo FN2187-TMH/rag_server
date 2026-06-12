@@ -1,4 +1,9 @@
-curl.exe -X POST "http://192.168.50.218:8000/api/v1/competition/reset" -H "X-Student-ID: B22DCCN320"    
-curl.exe -X POST "http://192.168.50.218:8000/api/v1/competition/evaluate" -H "X-Student-ID: B22DCCN320"   
+curl.exe -X POST "http://10.170.45.200:8000/api/v1/competition/reset" -H "X-Student-ID: B22DCCN320"    
+curl.exe -X POST "http://10.170.45.200:8000/api/v1/competition/evaluate" -H "X-Student-ID: B22DCCN320"   
 pip install -r requirements.txt
 python -m venv venv
+
+500 50 5 
+
+curl.exe -X POST "http://10.170.45.200:8000/api/v1/competition/evaluate" -H "X-Student-ID: B22DCCN320" -H "Content-Type: application/json" -d "{\"document_received\": false}"
+curl.exe -X POST "http://10.170.45.200:8000/api/v1/competition/evaluate" -H "X-Student-ID: B22DCCN320" -H "Content-Type: application/json" -d "{\"document_received\": true}"
