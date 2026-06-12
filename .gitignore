@@ -1,3 +1,6 @@
 models/
 vietnamese-sbert-local/
 *.safetensors
+Midterm
+venv
+Fake_system/

@@ -14,9 +14,9 @@ class VectorDB:
         # 2. Định nghĩa hàm Embedding sử dụng vietnamese-sbert local
         # Kiểm tra nếu đã có folder model local thì load từ đó, không thì mới tải
         current_dir = os.path.dirname(os.path.abspath(__file__))
-        local_model_path = os.path.join(current_dir, "models", "vietnamese-sbert")
+        local_model_path = os.path.join(current_dir, "models", "paraphrase")
         
-        model_source = local_model_path if os.path.exists(local_model_path) else "keepitreal/vietnamese-sbert"
+        model_source = local_model_path if os.path.exists(local_model_path) else "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
         
         self.embedding_fn = embedding_functions.SentenceTransformerEmbeddingFunction(
             model_name=model_source
@@ -69,7 +69,7 @@ class VectorDB:
         tokenized_corpus = [self._preprocess(doc) for doc in self.chunks]
         self.bm25 = BM25Okapi(tokenized_corpus)
 
-    def query_context(self, question: str, n_results: int = 3) -> List[str]:
+    def query_context(self, question: str, n_results: int = 5) -> List[str]:
         """Tìm kiếm các đoạn văn bản liên quan nhất tới câu hỏi"""
         if not self.chunks:
             return []

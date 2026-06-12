@@ -4,3 +4,5 @@ pydantic
 openai
 langchain-text-splitters
 chromadb
+sentence_transformers
+rank_bm25

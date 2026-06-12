@@ -8,10 +8,11 @@ import requests
 import services
 
 app = FastAPI(title="PTIT Offline RAG Competition - Student Server")
-
-TEACHER_BASE_URL = "http://192.168.50.218:8000/api/v1"
+## 192.168.50.218:8000
+## 192.168.50.168
+TEACHER_BASE_URL = "http://10.170.45.200:8000/api/v1"
 MY_STUDENT_ID = "B22DCCN320"      
-MY_SERVER_URL = "http://192.168.50.168:5000"   
+MY_SERVER_URL = "http://10.170.45.64:5000"   
 
 @app.on_event("startup")
 def auto_register_to_teacher():
