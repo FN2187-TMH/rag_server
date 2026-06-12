@@ -54,17 +54,46 @@ class AskResponse(BaseModel):
     sources: List[str] = []
 
 
+# @app.post("/upload", response_model=UploadResponse)
+# async def upload_document(payload: UploadRequest):
+#     print("\n" + "╔" + "═"*48 + "╗")
+#     print(f"║ [RECEIVE] Nhận tài liệu thi từ thầy! ID: {payload.doc_id} ║")
+#     print("╚" + "═"*48 + "╝")
+#     try:
+#         total_chunks = services.process_and_store_document(payload.text)
+#         print(f"✅ Xử lý thành công: Cắt thành {total_chunks} chunks và nạp vào Vector DB.")
+#         return UploadResponse(status="success", doc_id=payload.doc_id, chunks=total_chunks)
+#     except Exception as e:
+#         print(f"❌ Lỗi xử lý upload tài liệu: {e}")
+#         return UploadResponse(status="fail", doc_id=payload.doc_id, chunks=0)
+
 @app.post("/upload", response_model=UploadResponse)
 async def upload_document(payload: UploadRequest):
-    print("\n" + "╔" + "═"*48 + "╗")
-    print(f"║ [RECEIVE] Nhận tài liệu thi từ thầy! ID: {payload.doc_id} ║")
-    print("╚" + "═"*48 + "╝")
+    print("\n" + "╔" + "═"*52 + "╗")
+    print(f"║ [RECEIVE] Nhận tài liệu thi từ thầy! ID: {payload.doc_id or 'None'} ║")
+    print("╚" + "═"*52 + "╝")
+    
+    # 1. In ra màn hình tầm 150 kí tự đầu của document để kiểm tra dữ liệu trực quan
+    preview_text = payload.text[:150].replace("\n", " ") # Thay thế xuống dòng thành khoảng trắng để log đẹp, không nát dòng
+    print(f"📄 [PREVIEW 150 CHARS]: {preview_text}...")
+    print(f"📊 Tổng số ký tự thô nhận được: {len(payload.text)}")
+
+    # 2. Ghi sao lưu toàn bộ dữ liệu raw của document ra file txt vật lý đề phòng sự cố
+    try:
+        raw_file_name = f"raw_document_{payload.doc_id or 'latest'}.txt"
+        with open(raw_file_name, "w", encoding="utf-8") as f:
+            f.write(payload.text)
+        print(f"💾 [BACKUP SUCCESS] Đã lưu dữ liệu thô vào file: {raw_file_name}")
+    except Exception as file_err:
+        print(f"⚠️ [FILE ERROR] Không thể ghi file sao lưu txt: {file_err}")
+
+    # 3. Tiến hành đẩy sang services để băm nhỏ (Chunking) và Vector hóa lưu DB
     try:
         total_chunks = services.process_and_store_document(payload.text)
         print(f"✅ Xử lý thành công: Cắt thành {total_chunks} chunks và nạp vào Vector DB.")
         return UploadResponse(status="success", doc_id=payload.doc_id, chunks=total_chunks)
     except Exception as e:
-        print(f"❌ Lỗi xử lý upload tài liệu: {e}")
+        print(f"❌ Lỗi xử lý upload tài liệu tại services: {e}")
         return UploadResponse(status="fail", doc_id=payload.doc_id, chunks=0)
 
 @app.post("/ask", response_model=AskResponse)
