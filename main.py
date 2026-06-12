@@ -46,6 +46,9 @@ class UploadResponse(BaseModel):
 class AskRequest(BaseModel):
     question: str
 
+class EvaluateRequest(BaseModel):
+    document_received: Optional[bool] = False
+
 class AskResponse(BaseModel):
     answer: str
     sources: List[str] = []
@@ -76,5 +79,6 @@ async def ask_question(payload: AskRequest):
         print(f"🎲 Kích hoạt chế độ cứu điểm -> Chọn bừa đáp án: {random_answer}")
         return AskResponse(answer=random_answer, sources=[f"Lỗi hệ thống: {str(e)}"])
 
+
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=5000, reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=5000, reload=False)

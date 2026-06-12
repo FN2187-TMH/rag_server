@@ -8,8 +8,10 @@ import os
 
 class VectorDB:
     def __init__(self):
-        # 1. Khởi tạo Chroma client chạy trên RAM
-        self.client = chromadb.Client()
+        # 1. Khởi tạo Chroma client với chế độ lưu trữ vĩnh viễn (Persistence)
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        db_path = os.path.join(current_dir, "chroma_db")
+        self.client = chromadb.PersistentClient(path=db_path)
 
         # 2. Định nghĩa hàm Embedding sử dụng vietnamese-sbert local
         # Kiểm tra nếu đã có folder model local thì load từ đó, không thì mới tải
@@ -27,8 +29,24 @@ class VectorDB:
             name="rag_exam",
             embedding_function=self.embedding_fn
         )
-        self.bm25 = None
         self.chunks = []
+        self.bm25 = None
+
+        # 4. Tự động load lại dữ liệu cũ nếu có để rebuild BM25 sau khi restart
+        try:
+            existing_data = self.collection.get()
+            if existing_data and existing_data['documents']:
+                # Sắp xếp lại theo ID để giữ đúng thứ tự văn bản (id_0, id_1, ...)
+                combined = list(zip(existing_data['ids'], existing_data['documents']))
+                combined.sort(key=lambda x: int(x[0].split('_')[1]) if '_' in x[0] else 0)
+                
+                self.chunks = [item[1] for item in combined]
+                if self.chunks:
+                    tokenized_corpus = [self._preprocess(doc) for doc in self.chunks]
+                    self.bm25 = BM25Okapi(tokenized_corpus)
+                    print(f"✅ Đã nạp lại {len(self.chunks)} chunks từ bộ nhớ lưu trữ vĩnh viễn.")
+        except Exception as e:
+            print(f"ℹ️ Chưa có dữ liệu cũ hoặc lỗi khi nạp: {e}")
 
     def _preprocess(self, text: str) -> List[str]:
         if not text:
