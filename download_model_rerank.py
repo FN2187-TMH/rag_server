@@ -1,9 +1,13 @@
-# download_model.py
+# download_model.py (Bản đầy đủ, an toàn nhất để chạy trước khi thi)
 import os
 from sentence_transformers import SentenceTransformer, CrossEncoder
 
+# Đường dẫn thư mục lưu trong project của bạn
+current_dir = os.path.dirname(os.path.abspath(__file__))
+models_dir = os.path.join(current_dir, "models")
 
-# 2. TẢI VÀ LƯU RERANKER MODEL (Bổ sung phần này)
+
+# 2. TẢI VÀ LƯU RERANKER MODEL
 rerank_name = "BAAI/bge-reranker-base"
 rerank_save_path = os.path.join(models_dir, "reranker")
 
